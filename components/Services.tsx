@@ -1,7 +1,9 @@
 import Section from "@/components/Section";
 import { Briefcase, Building2, Clock, ShieldCheck } from "lucide-react";
 
-const services = [
+type Variant = "commercial" | "residential";
+
+const commercialServices = [
   {
     title: "Office Cleaning",
     description:
@@ -28,12 +30,49 @@ const services = [
   },
 ];
 
-export default function Services() {
+const residentialServices = [
+  {
+    title: "Recurring Home Cleaning",
+    description:
+      "Weekly, bi-weekly, or monthly cleaning to keep your home consistently fresh and tidy.",
+    icon: Briefcase,
+  },
+  {
+    title: "Deep Cleaning",
+    description:
+      "Detailed top-to-bottom cleaning for kitchens, bathrooms, and high-traffic areas.",
+    icon: Building2,
+  },
+  {
+    title: "Flexible Scheduling",
+    description:
+      "Convenient scheduling options that work around your family’s routine.",
+    icon: Clock,
+  },
+  {
+    title: "Trusted & Insured",
+    description:
+      "Background-checked, insured professionals you can trust in your home.",
+    icon: ShieldCheck,
+  },
+];
+
+type Props = {
+  variant: Variant;
+};
+
+export default function Services({ variant }: Props) {
+  const services = variant === "commercial" ? commercialServices : residentialServices;
+
   return (
     <Section
       id="services"
       eyebrow="Our Services"
-      title="Tailored cleaning solutions for offices and corporate environments"
+      title={
+        variant === "commercial"
+          ? "Tailored cleaning solutions for offices and corporate environments"
+          : "Professional cleaning services tailored for modern homes"
+      }
     >
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {services.map((service) => {

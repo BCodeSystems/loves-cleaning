@@ -1,39 +1,60 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
-
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  variable: "--font-sans",
-});
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Loves Cleaning | Commercial Office Cleaning",
-  description:
-    "Reliable commercial office cleaning for professional spaces like law firms, medical offices, and suites.",
   metadataBase: new URL("https://loves-cleaning.com"),
+  title: {
+    default: "Loves Cleaning",
+    template: "%s | Loves Cleaning",
+  },
+  description:
+    "Professional residential and commercial cleaning services. Reliable, consistent, and detail-focused cleaning for homes and offices.",
+
   icons: {
     icon: [
-      { url: "/favicon.ico" }, // fallback
-      { url: "/favicon.svg", type: "image/svg+xml" }, // modern browsers
+      { url: "/favicon.ico" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
       { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
     ],
-    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
   },
-  manifest: "/site.webmanifest",
+
+  openGraph: {
+    title: "Loves Cleaning",
+    description:
+      "Professional residential and commercial cleaning services.",
+    url: "https://loves-cleaning.com",
+    siteName: "Loves Cleaning",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Loves Cleaning Logo",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Loves Cleaning",
+    description:
+      "Professional residential and commercial cleaning services.",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body className="min-h-screen bg-white text-slate-900 antialiased">
-        {children}
-      </body>
+    <html lang="en">
+      <body>{children}</body>
     </html>
   );
 }

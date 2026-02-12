@@ -1,15 +1,40 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Section from "@/components/Section";
 import { SITE } from "@/lib/constants";
 import { Phone, Mail, MapPin } from "lucide-react";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
-export default function Contact() {
+type Variant = "commercial" | "residential";
+
+type Props = {
+  variant: Variant;
+};
+
+export default function Contact({ variant }: Props) {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
+
+  // Bot-resistance: avoid rendering contact details in initial HTML.
+  const [mounted, setMounted] = useState(false);
+  const [showPhone, setShowPhone] = useState(false);
+  const [showEmail, setShowEmail] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Build contact details client-side (reduces basic scraping).
+  const phoneDisplay = useMemo(() => String(SITE.phone || "").trim(), []);
+  const phoneHref = useMemo(() => {
+    const digits = phoneDisplay.replace(/[^0-9]/g, "");
+    return digits ? `tel:${digits}` : "#";
+  }, [phoneDisplay]);
+
+  const emailDisplay = useMemo(() => String(SITE.email || "").trim(), []);
+  const emailHref = useMemo(() => (emailDisplay ? `mailto:${emailDisplay}` : "#"), [emailDisplay]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -19,12 +44,34 @@ export default function Contact() {
     const form = e.currentTarget;
     const data = new FormData(form);
 
+    // Honeypot (spam trap): bots often fill hidden fields
+    const websiteTrap = String(data.get("website") || "").trim();
+    if (websiteTrap) {
+      // Pretend success (quietly drop spam)
+      setStatus("success");
+      form.reset();
+      return;
+    }
+
+    // Simple human verification checkbox
+    const isHuman = data.get("human") === "on";
+    if (!isHuman) {
+      setStatus("error");
+      setError("Please confirm you’re human by checking the box.");
+      return;
+    }
+
     const payload = {
-      name: String(data.get("name") || ""),
-      email: String(data.get("email") || ""),
-      phone: String(data.get("phone") || ""),
-      message: String(data.get("message") || ""),
-      source: SITE.domain, // useful later in Google Sheets
+      // Timestamp will be added server-side in the /api/lead route
+      contactName: String(data.get("contactName") || "").trim(),
+      businessName: String(data.get("businessName") || "").trim(),
+      email: String(data.get("email") || "").trim(),
+      phone: String(data.get("phone") || "").trim(),
+      message: String(data.get("message") || "").trim(),
+      status: "New", // default lead status for the Sheet
+      variant,
+      source: SITE.domain,
+      human: true,
     };
 
     try {
@@ -48,9 +95,17 @@ export default function Contact() {
   }
 
   return (
-    <Section id="contact" eyebrow="Contact" title="Get in touch">
+    <Section
+      id="contact"
+      eyebrow="Contact"
+      title={
+        variant === "commercial" ? "Get a tailored cleaning plan for your business" : "Come Home to a Cleaner Space"
+      }
+    >
       <p className="-mt-6 mb-10 text-base text-slate-600">
-        Ready to experience spotless cleaning? Contact us for a free quote.
+        {variant === "commercial"
+          ? "Tell us about your office and preferred schedule — we’ll follow up quickly."
+          : "Tell us about your home and what you need cleaned — we’ll follow up quickly."}
       </p>
 
       <div className="rounded-2xl bg-slate-50 p-6 sm:p-8 lg:p-10">
@@ -63,13 +118,23 @@ export default function Contact() {
                   <Phone className="h-6 w-6 text-brand" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">Phone</p>
-                  <a
-                    className="mt-1 block text-sm text-slate-600"
-                    href={`tel:${SITE.phone}`}
-                  >
-                    {SITE.phone}
-                  </a>
+                  <p className="text-sm font-semibold text-slate-900">Call</p>
+                  {mounted && showPhone ? (
+                    <a
+                      className="mt-1 block text-sm text-slate-600"
+                      href={phoneHref}
+                    >
+                      {phoneDisplay}
+                    </a>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setShowPhone(true)}
+                      className="mt-1 inline-flex text-sm font-medium text-slate-700 underline underline-offset-4 hover:text-slate-900"
+                    >
+                      Show phone number
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -79,12 +144,22 @@ export default function Contact() {
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-slate-900">Email</p>
-                  <a
-                    className="mt-1 block text-sm text-slate-600"
-                    href={`mailto:${SITE.email}`}
-                  >
-                    {SITE.email}
-                  </a>
+                  {mounted && showEmail ? (
+                    <a
+                      className="mt-1 block text-sm text-slate-600"
+                      href={emailHref}
+                    >
+                      {emailDisplay}
+                    </a>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setShowEmail(true)}
+                      className="mt-1 inline-flex text-sm font-medium text-slate-700 underline underline-offset-4 hover:text-slate-900"
+                    >
+                      Show email address
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -106,10 +181,23 @@ export default function Contact() {
             className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:p-8"
           >
             <div className="grid gap-4">
+              {/* Honeypot field (hidden). Real users won't see this. */}
+              <div className="hidden">
+                <label className="text-sm font-medium text-slate-900">
+                  Website
+                </label>
+                <input
+                  name="website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+                />
+              </div>
+
               <div>
                 <label className="text-sm font-medium text-slate-900">Name</label>
                 <input
-                  name="name"
+                  name="contactName"
                   required
                   className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand"
                   placeholder="Your name"
@@ -127,12 +215,25 @@ export default function Contact() {
                 />
               </div>
 
+              {variant === "commercial" && (
+                <div>
+                  <label className="text-sm font-medium text-slate-900">
+                    Business Name
+                  </label>
+                  <input
+                    name="businessName"
+                    className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand"
+                    placeholder="Company / office name"
+                  />
+                </div>
+              )}
+
               <div>
                 <label className="text-sm font-medium text-slate-900">Phone</label>
                 <input
                   name="phone"
                   className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand"
-                  placeholder="(optional)"
+                  placeholder={variant === "commercial" ? "Required" : "Optional"}
                 />
               </div>
 
@@ -145,9 +246,23 @@ export default function Contact() {
                   required
                   rows={5}
                   className="mt-1 w-full resize-none rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand"
-                  placeholder="Tell us about your cleaning needs..."
+                  placeholder={
+                    variant === "commercial"
+                      ? "Square footage, number of restrooms, frequency, preferred hours..."
+                      : "Home size, bedrooms/bathrooms, deep clean vs recurring, any priorities..."
+                  }
                 />
               </div>
+
+              <label className="mt-2 flex items-start gap-3 text-sm text-slate-700">
+                <input
+                  name="human"
+                  type="checkbox"
+                  required
+                  className="mt-1 h-4 w-4 rounded border-slate-300"
+                />
+                <span>I’m human (check to verify)</span>
+              </label>
 
               <button
                 disabled={status === "submitting"}

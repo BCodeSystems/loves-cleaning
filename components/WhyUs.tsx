@@ -1,37 +1,76 @@
 import Image from "next/image";
 import Section from "@/components/Section";
 
-const reasons = [
+type Variant = "commercial" | "residential";
+
+const commercialReasons = [
   "Experienced cleaning professionals",
-  "Eco-friendly cleaning products",
+  "Discreet, after-hours service",
   "Customized cleaning plans",
   "Quality assurance guarantee",
-  "Competitive pricing",
+  "Trusted & insured team",
   "Responsive customer support",
 ];
 
-export default function WhyUs() {
+const residentialReasons = [
+  "Trusted, background-checked cleaners",
+  "Eco-friendly products available",
+  "Flexible scheduling",
+  "Detail-focused deep cleans",
+  "Consistent, reliable service",
+  "Easy communication & support",
+];
+
+const commercialWhyCopy =
+  "We focus on consistency, discretion, and the details that matter in professional environments — so your office always feels clean, organized, and client-ready.";
+
+const residentialWhyCopy =
+  "We focus on reliable service and the details that matter at home — so your space stays fresh, comfortable, and ready for everyday life.";
+
+const commercialWhyImage = {
+  src: "/modern-office-conference-room.png",
+  alt: "Modern office conference room with natural light",
+};
+
+const residentialWhyImage = {
+  src: "/residential-why-us.jpg",
+  alt: "Bright modern kitchen with clean countertops and natural light",
+};
+
+type Props = {
+  variant: Variant;
+};
+
+export default function WhyUs({ variant }: Props) {
+  const reasons = variant === "commercial" ? commercialReasons : residentialReasons;
+  const copy = variant === "commercial" ? commercialWhyCopy : residentialWhyCopy;
+  const image = variant === "commercial" ? commercialWhyImage : residentialWhyImage;
+
   return (
-    <Section id="why-us" eyebrow="Why Us" title="Why choose Loves Cleaning?">
+    <Section
+      id="why-us"
+      eyebrow="Why Us"
+      title={
+        variant === "commercial"
+          ? "Why businesses choose Loves Cleaning"
+          : "Why homeowners choose Loves Cleaning"
+      }
+    >
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-center">
         {/* Image (optional) */}
         <div className="relative min-h-[300px] overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 shadow-sm sm:min-h-[380px]">
-          {/* If you add an image later, place it at /public/images/why-us.jpg */}
           <Image
-            src="/images/why-us.jpg"
-            alt="Clean professional office"
+            src={image.src}
+            alt={image.alt}
             fill
             className="object-cover"
+            sizes="(min-width: 1024px) 50vw, 100vw"
           />
         </div>
 
         {/* Copy + checklist */}
         <div>
-          <p className="text-base leading-7 text-slate-600">
-            We focus on consistency, discretion, and the details that matter in
-            professional environments — so your office always feels clean,
-            organized, and client-ready.
-          </p>
+          <p className="text-base leading-7 text-slate-600">{copy}</p>
 
           <ul className="mt-8 space-y-4">
             {reasons.map((reason) => (
