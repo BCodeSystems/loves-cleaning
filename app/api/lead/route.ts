@@ -63,31 +63,30 @@ export async function POST(req: Request) {
       source,
     };
 
-    const webhookUrl = "https://script.google.com/macros/s/AKfycbww-CisNKFfcbPIwJATbdw_Ubf97vsoWODTtThaJiAq2h_DAtJLgc47IA4GzXLQlpuqHg/exec";
+    const webhookUrl = process.env.LEADS_WEBHOOK_URL;
+    if (!webhookUrl) {
+      console.error("LEADS_WEBHOOK_URL environment variable is not set.");
+      return NextResponse.json(
+        { ok: false, error: "Server configuration error." },
+        { status: 500 }
+      );
+    }
+    const resp = await fetch(webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(sheetRow),
+    });
 
-    if (webhookUrl) {
-      const resp = await fetch(webhookUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(sheetRow),
-      });
-
-      if (!resp.ok) {
-        const text = await resp.text().catch(() => "");
-        console.error("Lead webhook failed:", resp.status, text);
-        return NextResponse.json(
-          { ok: false, error: "Failed to submit lead." },
-          { status: 500 }
-        );
-      }
-
-      return NextResponse.json({ ok: true });
+    if (!resp.ok) {
+      const text = await resp.text().catch(() => "");
+      console.error("Lead webhook failed:", resp.status, text);
+      return NextResponse.json(
+        { ok: false, error: "Failed to submit lead." },
+        { status: 500 }
+      );
     }
 
-    // If no webhook configured yet, log to server so the form still works end-to-end.
-    console.log("Lead received (no webhook configured):", sheetRow);
-
-    return NextResponse.json({ ok: true, warning: "LEADS_WEBHOOK_URL not set" });
+    return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("/api/lead error:", err);
     return NextResponse.json(
@@ -96,3 +95,4 @@ export async function POST(req: Request) {
     );
   }
 }
+export {};
