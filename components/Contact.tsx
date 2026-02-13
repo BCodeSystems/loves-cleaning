@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Section from "@/components/Section";
 import { SITE } from "@/lib/constants";
-import { Phone, Mail, MapPin } from "lucide-react";
+import { Phone, MapPin } from "lucide-react";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
@@ -20,7 +20,6 @@ export default function Contact({ variant }: Props) {
   // Bot-resistance: avoid rendering contact details in initial HTML.
   const [mounted, setMounted] = useState(false);
   const [showPhone, setShowPhone] = useState(false);
-  const [showEmail, setShowEmail] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -32,9 +31,6 @@ export default function Contact({ variant }: Props) {
     const digits = phoneDisplay.replace(/[^0-9]/g, "");
     return digits ? `tel:${digits}` : "#";
   }, [phoneDisplay]);
-
-  const emailDisplay = useMemo(() => String(SITE.email || "").trim(), []);
-  const emailHref = useMemo(() => (emailDisplay ? `mailto:${emailDisplay}` : "#"), [emailDisplay]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -133,31 +129,6 @@ export default function Contact({ variant }: Props) {
                       className="mt-1 inline-flex text-sm font-medium text-slate-700 underline underline-offset-4 hover:text-slate-900"
                     >
                       Show phone number
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand/10">
-                  <Mail className="h-6 w-6 text-brand" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-slate-900">Email</p>
-                  {mounted && showEmail ? (
-                    <a
-                      className="mt-1 block text-sm text-slate-600"
-                      href={emailHref}
-                    >
-                      {emailDisplay}
-                    </a>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => setShowEmail(true)}
-                      className="mt-1 inline-flex text-sm font-medium text-slate-700 underline underline-offset-4 hover:text-slate-900"
-                    >
-                      Show email address
                     </button>
                   )}
                 </div>
