@@ -243,8 +243,8 @@ export default function Contact({ variant }: Props) {
               </button>
 
               {status === "success" && (
-                <p className="text-sm font-medium text-brand">
-                  Sent — we’ll get back to you shortly.
+                <p className="text-lg font-medium text-brand">
+                  Thank you — your request has been received. We’ll be in touch shortly.
                 </p>
               )}
 
