@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { SITE } from "@/lib/constants";
 
 const navigation = [
@@ -8,6 +11,10 @@ const navigation = [
 ];
 
 export default function Header() {
+  const pathname = usePathname();
+  const isCommercial = pathname === "/commercial";
+  const isResidential = pathname === "/residential";
+
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-start px-6 py-4 lg:px-8">
@@ -29,15 +36,23 @@ export default function Header() {
 
         {/* Desktop navigation */}
         <nav className="ml-auto hidden items-center gap-12 md:flex">
-          {navigation.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="text-sm font-medium text-slate-700 hover:text-slate-900"
-            >
-              {item.label}
-            </a>
-          ))}
+          {navigation.map((item) => {
+            const isContact = item.label === "Contact";
+
+            return (
+              <a
+                key={item.href}
+                href={item.href}
+                className={`text-sm font-medium transition ${
+                  isContact
+                    ? "rounded-full bg-brand px-5 py-2 text-white hover:opacity-90"
+                    : "text-slate-700 hover:text-slate-900"
+                }`}
+              >
+                {item.label}
+              </a>
+            );
+          })}
         </nav>
       </div>
     </header>

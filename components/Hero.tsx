@@ -1,4 +1,6 @@
+"use client";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { SITE } from "@/lib/constants";
 import type { LandingVariant } from "@/lib/landingVariants";
 
@@ -8,6 +10,9 @@ type Props = {
 
 export default function Hero({ variant }: Props) {
   const { hero } = variant;
+  const pathname = usePathname();
+  const isCommercial = pathname === "/commercial";
+  const isResidential = pathname === "/residential";
 
   return (
     <section id="top" className="bg-white">
@@ -22,6 +27,34 @@ export default function Hero({ variant }: Props) {
 
         {/* Overlay */}
         <div className={`absolute inset-0 ${hero.overlayClassName ?? "bg-black/40"}`} />
+
+        {/* Commercial / Residential Toggle */}
+        <div className="absolute right-6 top-6 z-20">
+          <div className="inline-flex items-center rounded-full bg-white/90 backdrop-blur-sm p-1 text-sm shadow-md">
+            <a
+              href="/commercial"
+              aria-current={isCommercial ? "page" : undefined}
+              className={`rounded-full px-4 py-2 font-medium transition ${
+                isCommercial
+                  ? "bg-brand text-white"
+                  : "text-slate-700 hover:text-slate-900"
+              }`}
+            >
+              Commercial
+            </a>
+            <a
+              href="/residential"
+              aria-current={isResidential ? "page" : undefined}
+              className={`rounded-full px-4 py-2 font-medium transition ${
+                isResidential
+                  ? "bg-brand text-white"
+                  : "text-slate-700 hover:text-slate-900"
+              }`}
+            >
+              Residential
+            </a>
+          </div>
+        </div>
 
         {/* Content */}
         <div className="relative z-10 mx-auto flex h-full max-w-7xl items-center px-6 lg:px-8">
