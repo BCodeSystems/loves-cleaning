@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Cleaning Service Web Platform
 
-## Getting Started
+A modern, responsive web application built for a cleaning service business to showcase services, capture leads, and provide a clean, user-friendly experience across devices.
 
-First, run the development server:
+## Overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+This project was designed and developed as a real-world client solution, focusing on clarity, usability, and conversion. The goal was to create a professional online presence while implementing a scalable structure for future enhancements.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Frontend:** Next.js, React, Tailwind CSS  
+- **Backend:** Next.js API Routes  
+- **Language:** JavaScript  
+- **Deployment:** Vercel  
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Features
 
-## Learn More
+- Responsive design optimized for mobile and desktop  
+- Service-based layout for clear user navigation  
+- Lead capture functionality with form handling  
+- Clean UI/UX focused on simplicity and readability  
+- Reusable component structure for scalability  
 
-To learn more about Next.js, take a look at the following resources:
+## Architecture
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Built using Next.js App Router for modern routing and performance  
+- Component-based design for maintainability and reuse  
+- Separation between UI components and business logic  
+- Optimized for fast load times and SEO  
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Challenges & Solutions
 
-## Deploy on Vercel
+**Challenge:** Designing a clean and intuitive interface for non-technical users  
+**Solution:** Focused on minimal UI, clear hierarchy, and strong visual structure  
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Challenge:** Ensuring responsiveness across all device sizes  
+**Solution:** Implemented a mobile-first design approach using Tailwind CSS  
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Status
+
+Completed and deployed for client use.
+
+## Future Improvements
+
+- Add backend data storage for customer inquiries  
+- Implement scheduling and booking functionality  
+- Expand analytics and tracking for user behavior  
+
+## Author
+
+Developed by BCode Systems
